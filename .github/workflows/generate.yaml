@@ -49,11 +49,11 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_USER: root
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: ""
           POSTGRES_DB: ssb
           POSTGRES_HOST_AUTH_METHOD: trust
-          POSTGRES_HOST: localhost
+          POSTGRES_HOST: postgres
           POSTGRES_PORT: 5432
 
         options: >-
@@ -76,9 +76,9 @@ jobs:
     - name: Initialize database
       working-directory: sql/init
       run: |
-        psql -d ssb -f tables.sql
-        psql -d ssb -f load.sql
+        psql -h postgres -p 5432 -U postgres ssb -f tables.sql
+        psql -h postgres -p 5432 -U postgres ssb -f load.sql
 
     - name: Run query
       run: |
-        psql -d ssb --command ${{ github.event.inputs.query }}
+        psql -h postgres -p 5432 -U postgres ssb --command ${{ github.event.inputs.query }}
