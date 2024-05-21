@@ -13,11 +13,11 @@ on:
 jobs:
   build:
     env:
-      PATH: "ssb-dbgen"
+      SSB_PATH: "ssb-dbgen"
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ env.PATH }}
+        working-directory: ${{ env.SSB_PATH }}
 
     steps:
     - name: Checkout repository
@@ -34,7 +34,7 @@ jobs:
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ env.PATH }}/dbgen
+        name: ${{ env.SSB_PATH }}/dbgen
         path: dbgen
   
   generate:
