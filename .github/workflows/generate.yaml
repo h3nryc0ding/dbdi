@@ -32,8 +32,8 @@ jobs:
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: ssb-dbgen/dbgen
-        path: dbgen
+        name: dbgen
+        path: ssb-dbgen/dbgen
         if-no-files-found: error
   
   generate:
