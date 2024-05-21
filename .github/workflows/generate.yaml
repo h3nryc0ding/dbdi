@@ -12,12 +12,10 @@ on:
 
 jobs:
   build:
-    env:
-      SSB_PATH: "ssb-dbgen"
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ${{ env.SSB_PATH }}
+        working-directory: ssb-dbgen
 
     steps:
     - name: Checkout repository
@@ -34,8 +32,9 @@ jobs:
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
       with:
-        name: ${{ env.SSB_PATH }}/dbgen
+        name: ssb-dbgen/dbgen
         path: dbgen
+        if-no-files-found: error
   
   generate:
     needs: build
