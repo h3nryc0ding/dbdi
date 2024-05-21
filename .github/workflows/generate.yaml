@@ -50,6 +50,8 @@ jobs:
         image: postgres:latest
         env:
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: ssb
+          POSTGRES_USER: root
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -70,7 +72,6 @@ jobs:
     - name: Initialize database
       working-directory: sql/init
       run: |
-        psql -f database.sql
         psql -d ssb -f tables.sql
         psql -d ssb -f load.sql
 
