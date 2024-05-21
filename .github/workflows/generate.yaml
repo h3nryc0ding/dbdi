@@ -24,14 +24,12 @@ jobs:
         submodules: recursive
 
     - name: Build dbgen
-      run: cmake . && cmake --build .
-
-    - name: Set execute permissions
-      run: chmod +x dbgen
-
-    - name: Generate data
       run: |
-        echo "Running dbgen with scale factor ${{ github.event.inputs.scalefactor }}"
+        cmake . && cmake --build .
+        chmod +x dbgen
+
+    - name: Generate data with Scale Factor ${{ github.event.inputs.scalefactor }}
+      run: |
         ./dbgen -v -s ${{ github.event.inputs.scalefactor }}
 
     - name: Archive generated data
@@ -53,7 +51,7 @@ jobs:
           POSTGRES_PASSWORD: ""
           POSTGRES_DB: ssb
           POSTGRES_HOST_AUTH_METHOD: trust
-          POSTGRES_HOST: postgres
+          POSTGRES_HOST: localhost
           POSTGRES_PORT: 5432
 
         options: >-
@@ -76,9 +74,9 @@ jobs:
     - name: Initialize database
       working-directory: sql/init
       run: |
-        psql -h postgres -p 5432 -U postgres ssb -f tables.sql
-        psql -h postgres -p 5432 -U postgres ssb -f load.sql
+        psql -h localhost -p 5432 -U postgres ssb -f tables.sql
+        psql -h localhost -p 5432 -U postgres ssb -f load.sql
 
     - name: Run query
       run: |
-        psql -h postgres -p 5432 -U postgres ssb --command ${{ github.event.inputs.query }}
+        psql -h localhost -p 5432 -U postgres ssb --command ${{ github.event.inputs.query }}
