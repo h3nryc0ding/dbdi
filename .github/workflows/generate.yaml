@@ -1,0 +1,98 @@
+name: Build and Run dbgen
+
+on:
+  workflow_dispatch:
+    inputs:
+      scalefactor:
+        description: 'Scale factor for dbgen'
+        required: true
+        default: '1'
+      query:
+        description: 'Query to run'
+        required: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ssb-dbgen
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        submodules: recursive
+
+    - name: Build dbgen
+      run: cmake . && cmake --build .
+
+    - name: Set execute permissions
+      run: chmod +x dbgen
+
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v2
+      with:
+        name: dbgen
+        path: dbgen
+  
+  generate:
+    needs: build
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Download dbgen
+      uses: actions/download-artifact@v2
+      with:
+        name: dbgen
+
+    - name: Set execute permissions
+      run: chmod +x dbgen
+
+    - name: Generate data
+      run: |
+        echo "Running dbgen with scale factor ${{ github.event.inputs.scalefactor }}"
+        ./dbgen -v -s ${{ github.event.inputs.scalefactor }}
+
+    - name: Archive generated data
+      uses: actions/upload-artifact@v2
+      with:
+        name: data
+        path: *.tbl
+  
+  benchmark:
+    needs: generate
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:latest
+        env:
+          POSTGRES_PASSWORD: postgres
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Download generated data
+      uses: actions/download-artifact@v2
+      with:
+        name: data
+
+    - name: Initialize database
+      working-directory: sql/init
+      run: |
+        psql -f database.sql
+        psql -d ssb -f tables.sql
+        psql -d ssb -f load.sql
+
+    - name: Run query
+      run: |
+        psql -d ssb --command ${{ github.event.inputs.query }}

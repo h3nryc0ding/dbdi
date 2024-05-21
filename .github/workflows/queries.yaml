@@ -1,0 +1,59 @@
+on:
+  - workflow_dispatch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Build Docker image
+        run: docker build -t dbdi .
+
+      - name: Save Docker image
+        run: docker save dbdi > dbdi.tar
+
+      - name: Upload Docker image
+        uses: actions/upload-artifact@v2
+        with:
+          name: dbdi-image
+          path: dbdi.tar
+
+  queries:
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        queries:
+          - q1.1.sql
+          - q1.2.sql
+          - q1.3.sql
+          - q2.1.sql
+          - q2.2.sql
+          - q2.3.sql
+          - q3.1.sql
+          - q3.2.sql
+          - q3.3.sql
+          - q3.4.sql
+          - q4.1.sql
+          - q4.2.sql
+          - q4.3.sql
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Download Docker image
+        uses: actions/download-artifact@v2
+        with:
+          name: dbdi-image
+
+      - name: Load Docker image
+        run: docker load < dbdi.tar
+
+      - name: Run query
+        run: docker run dbdi psql -f /queries/${{ matrix.queries }}
