@@ -49,9 +49,13 @@ jobs:
       postgres:
         image: postgres:latest
         env:
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: ssb
           POSTGRES_USER: root
+          POSTGRES_PASSWORD: ""
+          POSTGRES_DB: ssb
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_HOST: localhost
+          POSTGRES_PORT: 5432
+
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
