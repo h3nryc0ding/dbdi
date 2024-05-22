@@ -9,4 +9,3 @@ COPY dates FROM '/tmp/date.tbl' DELIMITER '|';
 COPY part FROM '/tmp/part.tbl' DELIMITER '|';
 COPY supplier FROM '/tmp/supplier.tbl' DELIMITER '|';
 COPY lineorder FROM '/tmp/lineorder.tbl' DELIMITER '|';
-

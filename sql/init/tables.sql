@@ -116,5 +116,3 @@ CREATE TABLE lineorder (
   FOREIGN KEY (lo_suppkey)  REFERENCES supplier (s_suppkey),
   FOREIGN KEY (lo_orderdate)  REFERENCES dates (d_datekey)
 );
-
-

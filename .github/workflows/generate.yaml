@@ -72,9 +72,6 @@ jobs:
         name: data
         path: /tmp
 
-    - name: Check
-      run: ls -R /tmp
-
     - name: Initialize database
       working-directory: sql/init
       run: |
