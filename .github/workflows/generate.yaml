@@ -74,7 +74,7 @@ jobs:
 
     - name: Initialize database
       run: |
-        psql -h localhost -p 5432 -U postgres ssb -f tables.sql
+        psql -h localhost -p 5432 -U postgres ssb -f ./sql/init/tables.sql
         psql -h localhost -p 5432 -U postgres ssb -c "TRUNCATE customer;"
         psql -h localhost -p 5432 -U postgres ssb -c "TRUNCATE dates;"
         psql -h localhost -p 5432 -U postgres ssb -c "TRUNCATE part;"
