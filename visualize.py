@@ -4,8 +4,8 @@ import matplotlib.pyplot as plt
 # Read the CSV data from a file
 df = pd.read_csv('times.csv')
 
-# Convert the 'real_time' column to seconds
-df['real_time'] = df['real_time'].str.split().str.get(1).str.split('m').str.get(0).astype(float) * 60 + df['real_time'].str.split().str.get(1).str.split('m').str.get(1).str[:-1].astype(float)
+# Remove seconds from 'real_time' and convert it to float
+df['real_time'] = df['real_time'].astype(float)
 
 # Pivot the DataFrame to get 'buffer_size' as columns and 'real_time' as values
 pivot_df = df.pivot(index='sql_file', columns='buffer_size', values='real_time')

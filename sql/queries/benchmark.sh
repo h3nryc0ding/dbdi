@@ -1,5 +1,5 @@
 # Define an array of shared buffer sizes
-buffer_sizes=("64MB" "256MB" "2056MB" "6144MB" "12288MB" "19456MB")
+buffer_sizes=("64MB" "128MB" "256MB" "2056MB" "6144MB" "12288MB" "19456MB")
 
 # Create a CSV file and write the header
 echo "buffer_size,sql_file,real_time" > times.csv
@@ -17,7 +17,7 @@ do
   for sql_file in *.sql
   do
     # Run the SQL file and capture the "real" time
-    real_time=$( (time psql -d "ssb" -U "root" -f $sql_file > /dev/null) 2>&1 | grep real)
+    real_time=$( (time -p psql -d "ssb" -U "root" -f $sql_file > /dev/null) 2>&1 | awk '/real/ {print $2}')
     
     # Write the buffer size, SQL file name, and "real" time to the CSV file
     echo "$buffer_size,$sql_file,$real_time" >> times.csv

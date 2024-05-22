@@ -73,11 +73,28 @@ jobs:
         path: /tmp
 
     - name: Initialize database
-      working-directory: sql/init
       run: |
         psql -h localhost -p 5432 -U postgres ssb -f tables.sql
-        psql -h localhost -p 5432 -U postgres ssb -f load.sql
+        psql -h localhost -p 5432 -U postgres ssb -c "TRUNCATE customer;"
+        psql -h localhost -p 5432 -U postgres ssb -c "TRUNCATE dates;"
+        psql -h localhost -p 5432 -U postgres ssb -c "TRUNCATE part;"
+        psql -h localhost -p 5432 -U postgres ssb -c "TRUNCATE supplier;"
+        psql -h localhost -p 5432 -U postgres ssb -c "TRUNCATE lineorder;"
+        psql -h localhost -p 5432 -U postgres ssb -c "COPY customer FROM stdin DELIMITER '|';" < /tmp/customer.tbl
+        psql -h localhost -p 5432 -U postgres ssb -c "COPY dates FROM stdin DELIMITER '|';" < /tmp/date.tbl
+        psql -h localhost -p 5432 -U postgres ssb -c "COPY part FROM stdin DELIMITER '|';" < /tmp/part.tbl
+        psql -h localhost -p 5432 -U postgres ssb -c "COPY supplier FROM stdin DELIMITER '|';" < /tmp/supplier.tbl
+        psql -h localhost -p 5432 -U postgres ssb -c "COPY lineorder FROM stdin DELIMITER '|';" < /tmp/lineorder.tbl
 
-    - name: Run query
-      run: |
-        psql -h localhost -p 5432 -U postgres ssb --command "${{ github.event.inputs.query }}"
+
+    - name: Benchmark
+      working-directory: sql/queries
+      run: ./benchmark.sh
+
+    - name: Upload .csv results
+      uses: actions/upload-artifact@v2
+      with:
+        name: results
+        path: sql/queries/*.csv
+        if-no-files-found: error
+        
