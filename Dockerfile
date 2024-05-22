@@ -9,8 +9,8 @@ WORKDIR /home/ssb-dbgen
 
 # generate data
 COPY ssb-dbgen /home/ssb-dbgen
-RUN make -C .
-RUN ./dbgen -s 1 -T a -f -v
+RUN cmake . && cmake --build .
+RUN ./dbgen -s 1 -v
 RUN mv *.tbl /tmp/
 
 WORKDIR /home/student/init

@@ -76,7 +76,6 @@ jobs:
       working-directory: sql/init
       run: |
         psql -h localhost -p 5432 -U postgres ssb -f tables.sql
-        ls -la /tmp
         psql -h localhost -p 5432 -U postgres ssb -f load.sql
 
     - name: Run query
