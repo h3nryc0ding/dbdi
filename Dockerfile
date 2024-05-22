@@ -38,9 +38,9 @@ RUN DEBIAN_FRONTEND="noninteractive" apt-get -y install postgresql
 
 COPY --from=builder /var/lib/postgresql /var/lib/postgresql
 
-# copy queries
-COPY sql/queries /home/student/queries
+# copy queries and benchmark script
 WORKDIR /home/student/queries
+COPY sql/queries /home/student/queries
 
 COPY entrypoint.sh /
 ENTRYPOINT ["/entrypoint.sh"]
