@@ -75,11 +75,6 @@ jobs:
     - name: Initialize database
       run: |
         psql -h localhost -p 5432 -U postgres ssb -f ./sql/init/tables.sql
-        psql -h localhost -p 5432 -U postgres ssb -c "TRUNCATE customer;"
-        psql -h localhost -p 5432 -U postgres ssb -c "TRUNCATE dates;"
-        psql -h localhost -p 5432 -U postgres ssb -c "TRUNCATE part;"
-        psql -h localhost -p 5432 -U postgres ssb -c "TRUNCATE supplier;"
-        psql -h localhost -p 5432 -U postgres ssb -c "TRUNCATE lineorder;"
         psql -h localhost -p 5432 -U postgres ssb -c "COPY customer FROM stdin DELIMITER '|';" < /tmp/customer.tbl
         psql -h localhost -p 5432 -U postgres ssb -c "COPY dates FROM stdin DELIMITER '|';" < /tmp/date.tbl
         psql -h localhost -p 5432 -U postgres ssb -c "COPY part FROM stdin DELIMITER '|';" < /tmp/part.tbl
