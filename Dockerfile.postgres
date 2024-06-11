@@ -1,5 +1,7 @@
 FROM postgres:16 AS BUILDER
 
+ARG SCALE=1
+
 ENV DEBIAN_FRONTEND="noninteractive"
 ENV PGDATA="/var/lib/postgresql/data"
 
@@ -10,7 +12,7 @@ RUN apt-get update -y \
 RUN git clone https://github.com/eyalroz/ssb-dbgen.git
 WORKDIR ssb-dbgen
 RUN cmake . && cmake --build .
-RUN ./dbgen -s 1 -v
+RUN ./dbgen -s $SCALE -v
 RUN mv *.tbl /tmp/
 
 WORKDIR /home/student/init
