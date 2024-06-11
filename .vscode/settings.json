@@ -1,4 +1,0 @@
-{
-    "cmake.sourceDirectory": "${workspaceFolder}ssb-dbgen",
-    "cmake.buildDirectory": "${workspaceFolder}/ssb-dbgen/build"
-}

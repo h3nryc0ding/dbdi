@@ -1,3 +1,0 @@
-[submodule "ssb-dbgen"]
-	path = ssb-dbgen
-	url = https://github.com/eyalroz/ssb-dbgen.git

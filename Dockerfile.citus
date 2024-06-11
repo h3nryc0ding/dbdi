@@ -1,0 +1,42 @@
+FROM postgres:16 AS BUILDER
+
+ENV DEBIAN_FRONTEND="noninteractive"
+ENV PGDATA="/var/lib/postgresql/data"
+
+RUN apt-get update -y \
+    && apt-get upgrade -y \
+    && apt-get install -y git gcc make cmake build-essential ca-certificates libcurl4-openssl-dev liblz4-dev libzstd-dev libkrb5-dev postgresql-server-dev-16
+
+RUN git clone https://github.com/citusdata/citus.git
+WORKDIR citus
+RUN ./configure
+RUN make install-columnar
+
+RUN git clone https://github.com/eyalroz/ssb-dbgen.git
+WORKDIR ssb-dbgen
+RUN cmake . && cmake --build .
+RUN ./dbgen -s 1 -v
+RUN mv *.tbl /tmp/
+
+WORKDIR /home/student/init
+COPY sql/init/*.sql /home/student/init/
+
+ENV POSTGRES_DB="ssb"
+ENV POSTGRES_USER="postgres"
+
+USER postgres
+RUN chown -R postgres:postgres /var/lib/postgresql
+RUN /usr/lib/postgresql/16/bin/initdb -D $PGDATA && \
+    /usr/lib/postgresql/16/bin/pg_ctl -D $PGDATA -l /var/lib/postgresql/logfile start && \
+    psql -U $POSTGRES_USER -c "CREATE DATABASE $POSTGRES_DB;" && \
+    psql -U $POSTGRES_USER -d $POSTGRES_DB -f /home/student/init/tables.sql && \
+    psql -U $POSTGRES_USER -d $POSTGRES_DB -f /home/student/init/load.sql && \
+    /usr/lib/postgresql/16/bin/pg_ctl -D $PGDATA stop
+
+
+FROM postgres:16
+ENV PGDATA="/var/lib/postgresql/data"
+COPY --from=BUILDER /var/lib/postgresql/data /var/lib/postgresql/data
+
+COPY sql/queries /home/student/queries
+WORKDIR /home/student/queries
