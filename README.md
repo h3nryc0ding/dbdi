@@ -21,7 +21,6 @@ To facilitate this, I provide two Dockerfiles:
 Ensure you have the following installed on your system:
 
 - Docker
-- Docker Compose
 
 ### Setup
 
