@@ -6,7 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        scale: [1, 3, 5]
+        scale: [1, 3]
         extension: ["postgres", "citus"]
       fail-fast: false
     steps:
@@ -16,6 +16,10 @@ jobs:
       -
         name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          version: "lab:latest"
+          driver: cloud
+          endpoint: "h3nryc0ding/default"
 
       -
         name: Login to DockerHub
