@@ -1,4 +1,5 @@
-FROM --platform=$BUILDPLATFORM postgres:16 AS BUILDER
+# citus requires target platform to build correct binaries
+FROM --platform=$TARGETPLATFORM postgres:16 AS BUILDER
 
 ARG SCALE=1
 
