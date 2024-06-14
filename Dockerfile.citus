@@ -36,7 +36,7 @@ RUN /usr/lib/postgresql/16/bin/initdb -D $PGDATA && \
     psql -U $POSTGRES_USER -d $POSTGRES_DB -c "SELECT citus_version();" && \
     psql -U $POSTGRES_USER -d $POSTGRES_DB -f /home/student/init/tables.sql && \
     psql -U $POSTGRES_USER -d $POSTGRES_DB -f /home/student/init/load.sql && \
-    /usr/lib/postgresql/16/bin/pg_ctl -D $PGDATA stop
+    /usr/lib/postgresql/16/bin/pg_ctl -D $PGDATA stop -m smart
 
 FROM postgres:16
 
