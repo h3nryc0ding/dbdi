@@ -1,4 +1,4 @@
-FROM postgres:16 AS BUILDER
+FROM --platform=$BUILDPLATFORM postgres:16 AS BUILDER
 
 ARG SCALE=1
 
@@ -31,7 +31,7 @@ RUN /usr/lib/postgresql/16/bin/initdb -D $PGDATA && \
     /usr/lib/postgresql/16/bin/pg_ctl -D $PGDATA stop -m smart
 
 
-FROM postgres:16
+FROM --platform=$TARGETPLATFORM postgres:16
 ENV PGDATA="/var/lib/postgresql/data"
 COPY --from=BUILDER /var/lib/postgresql/data /var/lib/postgresql/data
 
